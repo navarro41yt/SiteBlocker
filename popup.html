@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Blocker Settings</title>
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shield-alt"></i> Site Blocker</h1>
+            <p class="user-info">User: <span id="username">navarro41yt</span></p>
+        </header>
+        
+        <div class="main-content">
+            <div class="add-site">
+                <input type="text" id="new-site" placeholder="Enter website to block (e.g., twitter.com)">
+                <button id="add-btn"><i class="fas fa-plus"></i> Add</button>
+            </div>
+            
+            <div class="sites-container">
+                <h2>Blocked Sites</h2>
+                <div id="sites-list" class="sites-list">
+                    <!-- Sites will be added here by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="stats">
+                <p>Total sites blocked: <span id="sites-count">0</span></p>
+                <p id="current-time">2025-07-09 09:56:30</p>
+            </div>
+            <div class="actions">
+                <button id="import-btn" title="Import list"><i class="fas fa-file-import"></i></button>
+                <button id="export-btn" title="Export list"><i class="fas fa-file-export"></i></button>
+                <button id="help-btn" title="Help"><i class="fas fa-question-circle"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>How to Use Site Blocker</h2>
+            <ul>
+                <li><strong>Add a site:</strong> Enter the domain in the input field and click "Add"</li>
+                <li><strong>Remove a site:</strong> Click the trash icon next to any site</li>
+                <li><strong>Import/Export:</strong> Use the buttons at the bottom to backup or restore your list</li>
+            </ul>
+            <p><strong>Note:</strong> Enter domains without "http://" or "www." (e.g., "facebook.com")</p>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

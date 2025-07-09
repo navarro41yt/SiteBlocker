@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Restricted</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="icon-container">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>Access Restricted</h1>
+            <div class="divider"></div>
+            <p class="message">This website has been blocked according to your organization's policy.</p>
+            <div class="details">
+                <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="current-time">2025-07-09 09:51:51</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-user"></i>
+                    <span>User: navarro41yt</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-link"></i>
+                    <span id="blocked-url">Requested URL: [URL will appear here]</span>
+                </div>
+            </div>
+            <div class="options">
+                <button id="back-button" class="btn primary"><i class="fas fa-arrow-left"></i> Go Back</button>
+                <button id="report-button" class="btn secondary"><i class="fas fa-flag"></i> Report Issue</button>
+            </div>
+            <div class="help-text">
+                <p>If you believe this is an error, please contact your system administrator.</p>
+                <p class="help-email">support@yourcompany.com</p>
+            </div>
+        </div>
+        <div id="report-form" class="report-form hidden">
+            <h2>Report Incorrect Blocking</h2>
+            <form id="issue-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" value="navarro41yt" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reason">Reason for access</label>
+                    <select id="reason" name="reason">
+                        <option value="">Select a reason...</option>
+                        <option value="work">Work-related</option>
+                        <option value="research">Research purposes</option>
+                        <option value="error">Incorrectly blocked</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="comments">Additional comments</label>
+                    <textarea id="comments" name="comments" rows="4"></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" id="cancel-report" class="btn secondary">Cancel</button>
+                    <button type="submit" class="btn primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer>
+        <p>Protected by <strong>Enterprise Security Shield</strong> &copy; 2025</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

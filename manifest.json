@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Site BlockerGold ",
+  "version": "1.0",
+  "description": "Block distracting websites with a customizable list",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    "block.html"
+  ]
+}
