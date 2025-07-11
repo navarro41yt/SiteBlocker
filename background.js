@@ -10,6 +10,7 @@ chrome.storage.sync.get(['blockedSites'], function(result) {
         // Save default sites if no saved list exists
         chrome.storage.sync.set({blockedSites: blockedSites});
     }
+    updateBlockingRules();
 });
 
 // Listen for changes to the blocked sites list
@@ -17,31 +18,48 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     if (changes.blockedSites) {
         blockedSites = changes.blockedSites.newValue;
         console.log("Updated blocked sites:", blockedSites);
+        updateBlockingRules();
     }
 });
 
-// Function to extract hostname from URL
-function extractHostname(url) {
-    try {
-        return new URL(url).hostname;
-    } catch (e) {
-        // If URL parsing fails, try a simpler approach
-        let hostname = url.replace(/^(https?:\/\/)?(www\.)?/i, '');
-        hostname = hostname.split('/')[0];
-        return hostname;
-    }
+// Update declarativeNetRequest rules based on blocked sites
+function updateBlockingRules() {
+    // First, remove all existing rules
+    chrome.declarativeNetRequest.getDynamicRules((existingRules) => {
+        const existingRuleIds = existingRules.map(rule => rule.id);
+        
+        chrome.declarativeNetRequest.updateDynamicRules({
+            removeRuleIds: existingRuleIds,
+            addRules: createBlockingRules()
+        }, () => {
+            if (chrome.runtime.lastError) {
+                console.error("Error updating rules:", chrome.runtime.lastError);
+            } else {
+                console.log("Blocking rules updated successfully");
+            }
+        });
+    });
 }
 
-// Block requests to exactly matching hostnames
-chrome.webRequest.onBeforeRequest.addListener(
-    function (details) {
-        const hostname = extractHostname(details.url);
-        
-        // Check if the hostname exactly matches any blocked site
-        if (blockedSites.includes(hostname)) {
-            return { redirectUrl: chrome.runtime.getURL("block.html") };
-        }
-    },
-    { urls: ["<all_urls>"] },
-    ["blocking"]
-);
+// Create blocking rules for declarativeNetRequest
+function createBlockingRules() {
+    const rules = [];
+    
+    blockedSites.forEach((site, index) => {
+        // Create rule for exact hostname match
+        rules.push({
+            id: index + 1,
+            priority: 1,
+            action: {
+                type: "redirect",
+                redirect: { url: chrome.runtime.getURL("block.html") }
+            },
+            condition: {
+                urlFilter: `||${site}/*`,
+                resourceTypes: ["main_frame", "sub_frame"]
+            }
+        });
+    });
+    
+    return rules;
+}
