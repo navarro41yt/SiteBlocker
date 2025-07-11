@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     // Show empty state message
     function showEmptyState() {
         sitesList.innerHTML = `
@@ -77,37 +77,48 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         sitesCount.textContent = '0';
     }
-    
+
     // Add a new site to the blocked list
     function addSite() {
         let newSite = newSiteInput.value.trim().toLowerCase();
-        
+
         // Basic validation
         if (!newSite) {
             showError(newSiteInput);
             return;
         }
-        
-        // Remove http://, https://, and www. if present
-        newSite = newSite.replace(/^(https?:\/\/)?(www\.)?/, '');
-        
-        // Check if site already contains a path and remove it
-        if (newSite.includes('/')) {
+
+        // Extract the hostname properly
+        try {
+            // If user entered a URL with protocol, extract the hostname
+            if (newSite.startsWith('http')) {
+                newSite = new URL(newSite).hostname;
+            } else if (!newSite.includes('.')) {
+                // Not a valid hostname
+                showError(newSiteInput, 'Enter a valid hostname like www.youtube.com');
+                return;
+            }
+            
+            // Remove any trailing slashes or paths
             newSite = newSite.split('/')[0];
+            
+        } catch (e) {
+            showError(newSiteInput, 'Invalid URL format');
+            return;
         }
-        
+
         chrome.storage.sync.get(['blockedSites'], function(result) {
             let sites = result.blockedSites || [];
-            
+
             // Check if site already exists
             if (sites.includes(newSite)) {
                 showError(newSiteInput, 'Site already blocked');
                 return;
             }
-            
+
             // Add the new site
             sites.push(newSite);
-            
+
             // Save the updated list
             chrome.storage.sync.set({blockedSites: sites}, function() {
                 newSiteInput.value = '';
@@ -116,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     // Remove a site from the blocked list
     function removeSite(site) {
         chrome.storage.sync.get(['blockedSites'], function(result) {
