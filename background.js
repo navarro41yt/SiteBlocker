@@ -1,5 +1,5 @@
 // Initialize blocked sites from storage or use defaults
-let blockedSites = ["www.facebook.com", "www.instagram.com", "www.youtube.com"];
+let blockedSites = ["www.facebook.com", "instagram.com", "youtube.com"];
 
 // Load saved blocked sites when extension starts
 chrome.storage.sync.get(['blockedSites'], function(result) {
@@ -32,15 +32,39 @@ function extractHostname(url) {
     }
 }
 
-// Block requests to exactly matching hostnames
+// Function to check if a hostname should be blocked based on the blocking rules
+function shouldBlockHostname(hostname, blockedSite) {
+    // Split both hostnames into parts
+    const hostnameParts = hostname.split('.');
+    const blockedSiteParts = blockedSite.split('.');
+    
+    // If the blocked site has only two parts (domain.tld), block all subdomains
+    if (blockedSiteParts.length === 2) {
+        // Check if the last two parts of the hostname match the blocked site
+        return hostnameParts.length >= 2 && 
+               hostnameParts[hostnameParts.length - 2] === blockedSiteParts[0] && 
+               hostnameParts[hostnameParts.length - 1] === blockedSiteParts[1];
+    } 
+    // If the blocked site has three or more parts, require an exact match
+    else {
+        return hostname === blockedSite;
+    }
+}
+
+// Block requests to matching hostnames based on the rules
 chrome.webRequest.onBeforeRequest.addListener(
     function (details) {
         const hostname = extractHostname(details.url);
         
-        // Check if the hostname exactly matches any blocked site
-        if (blockedSites.includes(hostname)) {
-            return { redirectUrl: chrome.runtime.getURL("block.html") };
+        // Check each blocked site against our matching rules
+        for (const blockedSite of blockedSites) {
+            if (shouldBlockHostname(hostname, blockedSite)) {
+                return { redirectUrl: chrome.runtime.getURL("block.html") };
+            }
         }
+        
+        // Allow the request if no matches
+        return { cancel: false };
     },
     { urls: ["<all_urls>"] },
     ["blocking"]
